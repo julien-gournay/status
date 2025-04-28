@@ -3,12 +3,17 @@ return [
     'sites' => [
         'web' => [
             'https://juliengournay.fr',
+            'https://dev.juliengournay.fr',
+
             'https://cours.juliengournay.fr',
+            'https://filmotech.juliengournay.fr',
             'https://marieteam.juliengournay.fr',
             'https://filmotech.juliengournay.fr',
-            'https://services.juliengournay.fr',
             'https://legrandberger.donovanmercier.fr/',
-            'https://marieteam.juliengournay.fr/',
+
+            'https://password.juliengournay.fr',
+            'https://evenement.juliengournay.fr',
+            'https://simulateur-bts-sio.juliengournay.fr',
         ],
         'redirect' => [
             'https://nas.juliengournay.fr',

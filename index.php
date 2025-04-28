@@ -194,162 +194,8 @@ if ($isAjax) {
             }
         }
     </script>
-    
-    <style>
-        .animate-gradient {
-            background-size: 400%;
-            -webkit-animation: gradient 15s ease infinite;
-            animation: gradient 15s ease infinite;
-        }
-        
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .card-hover {
-            transition: transform 0.3s ease;
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-        }
-        
-        .refresh-button {
-            transition: all 0.3s ease;
-        }
-        
-        .refresh-button:active {
-            transform: scale(0.95);
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-        
-        .modal-content {
-            position: relative;
-            background-color: white;
-            margin: 15% auto;
-            padding: 20px;
-            width: 80%;
-            max-width: 600px;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        
-        .dark .modal-content {
-            background-color: #1f2937;
-            color: white;
-        }
-        
-        .close-modal {
-            position: absolute;
-            right: 1rem;
-            top: 1rem;
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
-        
-        .header {
-            background-color: white;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-        
-        .dark .header {
-            background-color: #1f2937;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3);
-        }
-        
-        .nav-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
-        
-        .category-tabs {
-            display: flex;
-            gap: 0.5rem;
-            background-color: #f3f4f6;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-        }
-        
-        .dark .category-tabs {
-            background-color: #374151;
-        }
-        
-        .category-tab {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        
-        .category-tab.active {
-            background-color: #3b82f6;
-            color: white;
-        }
-        
-        .category-tab:hover:not(.active) {
-            background-color: #e5e7eb;
-        }
-        
-        .dark .category-tab:hover:not(.active) {
-            background-color: #4b5563;
-        }
-        
-        .refresh-button {
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            background-color: #f3f4f6;
-        }
-        
-        .dark .refresh-button {
-            background-color: #374151;
-        }
-        
-        .refresh-button:hover {
-            background-color: #e5e7eb;
-        }
-        
-        .dark .refresh-button:hover {
-            background-color: #4b5563;
-        }
-        
-        .refresh-button:active {
-            transform: scale(0.95);
-        }
-        
-        .logo {
-            height: 2.5rem;
-            width: auto;
-        }
-        
-        .category-content {
-            display: none;
-        }
-        
-        .category-content.active {
-            display: block;
-        }
-    </style>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <header class="header">
@@ -362,12 +208,6 @@ if ($isAjax) {
                         <div class="category-tab" data-category="redirect">Redirections</div>
                     </div>
                 </div>
-                <button id="refreshButton" class="refresh-button">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    <span>Rafraîchir</span>
-                </button>
             </div>
         </div>
     </header>
@@ -375,9 +215,15 @@ if ($isAjax) {
     <div class="container mx-auto px-4 py-8">
         <div class="text-center mb-12">
             <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-gradient bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 bg-clip-text text-transparent">
-                État des sites
+                État des sites Julien Gournay
             </h1>
-            <p class="text-gray-600 dark:text-gray-400">Surveillance en temps réel de vos services</p>
+            <p class="text-gray-600 dark:text-gray-400">Surveillance en temps réel de mes services</p>
+            <button id="refreshButton" class="refresh-button">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Rafraîchir</span>
+            </button>
         </div>
 
         <?php foreach ($sites as $category => $categorySites): ?>
