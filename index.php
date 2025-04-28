@@ -213,14 +213,14 @@ if ($isAjax) {
     </header>
 
     <div class="container mx-auto px-4 py-8">
-        <div class="text-center mb-12">
+        <div class="text-center mb-12 flex flex-col items-center mt-0">
             <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-gradient bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 bg-clip-text text-transparent">
                 État des sites Julien Gournay
             </h1>
             <p class="text-gray-600 dark:text-gray-400">Surveillance en temps réel de mes services</p>
-            <button id="refreshButton" class="refresh-button">
+            <button id="refreshButton" class="refresh-button w-min mt-12">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
                 <span>Rafraîchir</span>
             </button>
