@@ -24,9 +24,20 @@ function checkSiteStatus($url) {
     curl_exec($curl);
     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     $totalTime = round((microtime(true) - $start) * 1000);
+    $effectiveUrl = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
 
     curl_close($curl);
 
+    // Vérifier si le site redirige vers une page de maintenance
+    if (preg_match('/\/maintenance(\.html)?$/', $effectiveUrl)) {
+        return [
+            'status' => 'maintenance',
+            'time' => $totalTime,
+            'message' => 'Le site est momentanément en maintenance.'
+        ];
+    }
+
+    // Pour les autres cas, retourner le code HTTP normal
     return [
         'status' => $httpCode,
         'time' => $totalTime
@@ -232,10 +243,21 @@ if ($isAjax) {
                 <?php foreach ($categorySites as $site):
                     $result = checkSiteStatus($site);
                     $history = updateSiteHistory($site, $result);
-                    $statusClass = ($result['status'] == 200) ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 
-                                (($result['status'] >= 500) ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 
-                                'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300');
-                    $statusIcon = ($result['status'] == 200) ? '✅' : (($result['status'] >= 500) ? '❌' : '⚠️');
+                    
+                    // Définir les classes et icônes en fonction du statut
+                    if ($result['status'] == 200) {
+                        $statusClass = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+                        $statusIcon = '✅';
+                    } elseif ($result['status'] == 'maintenance') {
+                        $statusClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+                        $statusIcon = '🔧';
+                    } elseif ($result['status'] >= 500) {
+                        $statusClass = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+                        $statusIcon = '❌';
+                    } else {
+                        $statusClass = 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+                        $statusIcon = '⚠️';
+                    }
                 ?>
                     <div class="card-hover bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 cursor-pointer" onclick="showDowntimes('<?= htmlspecialchars($site) ?>')">
                         <div class="flex items-center justify-between mb-4">
@@ -249,9 +271,18 @@ if ($isAjax) {
                             <div class="flex items-center justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Statut HTTP</span>
                                 <span class="px-3 py-1 text-sm rounded-full <?= $statusClass ?>">
-                                    <?= $result['status'] ?>
+                                    <?= $result['status'] == 'maintenance' ? 'Maintenance' : $result['status'] ?>
                                 </span>
                             </div>
+                            
+                            <?php if ($result['status'] == 'maintenance'): ?>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Message de maintenance</span>
+                                <span class="text-right text-blue-600 dark:text-blue-400">
+                                    <?= htmlspecialchars($result['message']) ?>
+                                </span>
+                            </div>
+                            <?php endif; ?>
                             
                             <div class="flex items-center justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Temps de réponse</span>
@@ -280,7 +311,7 @@ if ($isAjax) {
                             <div class="flex items-center justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Dernier up</span>
                                 <span class="text-gray-900 dark:text-white">
-                                    <?= date('d/m/Y H:i', $history['last_up']) ?>
+                                    <?= date('d/m/Y H:i:s', $history['last_up']) ?>
                                 </span>
                             </div>
                             <?php endif; ?>
@@ -289,7 +320,7 @@ if ($isAjax) {
                             <div class="flex items-center justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Dernier down</span>
                                 <span class="text-gray-900 dark:text-white">
-                                    <?= date('d/m/Y H:i', $history['last_down']) ?>
+                                    <?= date('d/m/Y H:i:s', $history['last_down']) ?>
                                 </span>
                             </div>
                             <?php endif; ?>
@@ -362,11 +393,21 @@ if ($isAjax) {
                         const uptime = info.uptime;
                         const host = new URL(site).host;
                         
-                        const statusClass = status.status === 200 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
-                            (status.status >= 500 ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' :
-                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300');
-                        
-                        const statusIcon = status.status === 200 ? '✅' : (status.status >= 500 ? '❌' : '⚠️');
+                        // Définir les classes et icônes en fonction du statut
+                        let statusClass, statusIcon;
+                        if (status.status === 200) {
+                            statusClass = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+                            statusIcon = '✅';
+                        } else if (status.status === 'maintenance') {
+                            statusClass = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+                            statusIcon = '🔧';
+                        } else if (status.status >= 500) {
+                            statusClass = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+                            statusIcon = '❌';
+                        } else {
+                            statusClass = 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+                            statusIcon = '⚠️';
+                        }
                         
                         let downSince = '';
                         if (history.down_since) {
@@ -392,8 +433,16 @@ if ($isAjax) {
                             <div class="space-y-4">
                                 <div class="flex items-center justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">Statut HTTP</span>
-                                    <span class="px-3 py-1 text-sm rounded-full ${statusClass}">${status.status}</span>
+                                    <span class="px-3 py-1 text-sm rounded-full ${statusClass}">
+                                        ${status.status === 'maintenance' ? 'Maintenance' : status.status}
+                                    </span>
                                 </div>
+                                ${status.status === 'maintenance' ? `
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600 dark:text-gray-400">Message de maintenance</span>
+                                    <span class="text-right text-blue-600 dark:text-blue-400">${status.message}</span>
+                                </div>
+                                ` : ''}
                                 <div class="flex items-center justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">Temps de réponse</span>
                                     <span class="text-gray-900 dark:text-white font-medium">${status.time} ms</span>
@@ -411,13 +460,13 @@ if ($isAjax) {
                                 ${history.last_up ? `
                                 <div class="flex items-center justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">Dernier up</span>
-                                    <span class="text-gray-900 dark:text-white">${new Date(history.last_up * 1000).toLocaleString('fr-FR')}</span>
+                                    <span class="text-gray-900 dark:text-white">${new Date(history.last_up * 1000).toLocaleString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'})}</span>
                                 </div>
                                 ` : ''}
                                 ${history.last_down ? `
                                 <div class="flex items-center justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">Dernier down</span>
-                                    <span class="text-gray-900 dark:text-white">${new Date(history.last_down * 1000).toLocaleString('fr-FR')}</span>
+                                    <span class="text-gray-900 dark:text-white">${new Date(history.last_down * 1000).toLocaleString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'})}</span>
                                 </div>
                                 ` : ''}
                                 <a href="${site}" target="_blank" class="block w-full mt-4 px-4 py-2 text-center text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-300">
@@ -468,7 +517,7 @@ if ($isAjax) {
                 downtimes.forEach(downtime => {
                     html += `
                         <tr class="border-b">
-                            <td class="py-2">${new Date(downtime.timestamp * 1000).toLocaleString('fr-FR')}</td>
+                            <td class="py-2">${new Date(downtime.timestamp * 1000).toLocaleString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'})}</td>
                             <td class="py-2">${downtime.status}</td>
                             <td class="py-2">${downtime.response_time} ms</td>
                         </tr>
